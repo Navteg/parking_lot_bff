@@ -1,10 +1,10 @@
-const { port, DB_CONFIG } = require("./const/constants.js");
+const { port, DB_CONFIG } = require("./src/const/constants.js");
 const knex = require("knex");
 const express = require("express");
-const register = require("./handlers/registeration.js");
-const login = require("./handlers/login.js");
-const bookSlot = require("./handlers/book-slot.js");
-const releaseSlot = require("./handlers/release-slot.js");
+const register = require("./src/handlers/registeration.js");
+const login = require("./src/handlers/login.js");
+const bookSlot = require("./src/handlers/book-slot.js");
+const releaseSlot = require("./src/handlers/release-slot.js");
 const app = express();
 var bodyParser = require("body-parser");
 
