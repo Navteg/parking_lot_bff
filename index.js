@@ -7,6 +7,9 @@ const bookSlot = require("./src/handlers/book-slot.js");
 const releaseSlot = require("./src/handlers/release-slot.js");
 const app = express();
 var bodyParser = require("body-parser");
+import pg from "pg";
+
+const { Pool } = pg;
 
 app.use(bodyParser.json());
 app.use(
@@ -16,7 +19,10 @@ app.use(
 );
 
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://parking-lot-api-64l4.onrender.com");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://parking-lot-api-64l4.onrender.com"
+  );
   res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
   res.header(
     "Access-Control-Allow-Headers",
@@ -29,7 +35,12 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded());
 
-const db = knex(DB_CONFIG);
+const db = knex(
+  new Pool({
+    connectionString:
+      "postgres://default:6u0YoNgSanWi@ep-odd-sun-22651255-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb?sslmode=require",
+  })
+);
 app.set("db", db);
 
 app.post("/login", function (req, res) {
