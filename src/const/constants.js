@@ -6,6 +6,7 @@ const DB_CONFIG = {
     user: "default", // use your username here
     password: "6u0YoNgSanWi", // use your password here
     database: "verceldb", // use your database name here
+    ssl: { require: true },
   },
 };
 
