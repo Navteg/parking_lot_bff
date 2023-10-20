@@ -2,10 +2,10 @@ const port = 8000;
 const DB_CONFIG = {
   client: "pg",
   connection: {
-    host: "localhost", // use your local ip address here
-    user: "postgres", // use your username here
-    password: "password", // use your password here
-    database: "parking", // use your database name here
+    host: "ep-odd-sun-22651255-pooler.us-east-1.postgres.vercel-storage.com", // use your local ip address here
+    user: "default", // use your username here
+    password: "6u0YoNgSanWi", // use your password here
+    database: "verceldb", // use your database name here
   },
 };
 

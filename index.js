@@ -7,9 +7,6 @@ const bookSlot = require("./src/handlers/book-slot.js");
 const releaseSlot = require("./src/handlers/release-slot.js");
 const app = express();
 var bodyParser = require("body-parser");
-import pg from "pg";
-
-const { Pool } = pg;
 
 app.use(bodyParser.json());
 app.use(
@@ -35,12 +32,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded());
 
-const db = knex(
-  new Pool({
-    connectionString:
-      "postgres://default:6u0YoNgSanWi@ep-odd-sun-22651255-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb?sslmode=require",
-  })
-);
+const db = knex(DB_CONFIG);
 app.set("db", db);
 
 app.post("/login", function (req, res) {
