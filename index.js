@@ -16,7 +16,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  //   res.header("Access-Control-Allow-Origin", "http://10.0.2.2:");
+    res.header("Access-Control-Allow-Origin", "https://parking-lot-api-64l4.onrender.com");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
   res.header(
     "Access-Control-Allow-Headers",
