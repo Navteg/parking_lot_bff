@@ -40,7 +40,7 @@ const bookSlot = async (req, res) => {
         table.string("id").primary();
         table.string("slot_id");
         table.string("vehicle_number");
-        table.string("vehicle_type");
+        table.string("vehicle_type").unique();
         table.string("created_at");
         table.string("updated_at");
         table.foreign("slot_id").references("id").inTable("slots");

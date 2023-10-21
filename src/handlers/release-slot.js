@@ -50,6 +50,8 @@ const releaseSlot = async (req, res) => {
       message: "slot released successfully",
       totalAmount,
       totalHrs,
+      "entryTime": booking.created_at,
+      "exitTime": new Date().toISOString(),
     });
   } catch (e) {
     console.error({
