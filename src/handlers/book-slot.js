@@ -17,7 +17,7 @@ const bookSlot = async (req, res) => {
       .andWhere("type", vehicleType)
       .andWhere("status", SLOT_AVAILABLE);
 
-    if (slots.length === 0 || !slots || slots === undefined) {
+    if (slots.length === 0 || slots === undefined) {
       res.status(404).send({
         message: `Sorry, no ${vehicleType} slot available`,
       });
@@ -39,8 +39,8 @@ const bookSlot = async (req, res) => {
       await db.schema.createTable("booking", function (table) {
         table.string("id").primary();
         table.string("slot_id");
-        table.string("vehicle_number");
-        table.string("vehicle_type").unique();
+        table.string("vehicle_number").unique();
+        table.string("vehicle_type");
         table.string("created_at");
         table.string("updated_at");
         table.foreign("slot_id").references("id").inTable("slots");
