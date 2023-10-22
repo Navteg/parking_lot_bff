@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const generateToken = require("./helpers/generate-token.js");
 
 const login = (req, res) => {
   const { id, password } = req.body;
@@ -32,9 +33,11 @@ const login = (req, res) => {
           });
         } else {
           if (await isPasswordCorrect(rows[0].password)) {
-            res.status(200).send({
+            const token = generateToken(id);
+            console.log(token);
+            return res.status(200).send({
               message: "login successful",
-              parkingId: id,
+              token: token,
             });
           } else {
             res.status(400).send({

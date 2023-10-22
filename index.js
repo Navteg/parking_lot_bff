@@ -1,4 +1,4 @@
-const { port, DB_CONFIG } = require("./src/const/constants.js");
+const { port, DB_CONFIG, ENV } = require("./src/const/constants.js");
 const knex = require("knex");
 const express = require("express");
 const register = require("./src/handlers/registeration.js");
@@ -50,5 +50,7 @@ app.post("/book-slot", function (req, res) {
 app.post("/release-slot", function (req, res) {
   releaseSlot(req, res);
 });
+
+console.log("enviroment", ENV);
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));

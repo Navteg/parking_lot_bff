@@ -1,9 +1,19 @@
 const { v4: uuidv4 } = require("uuid");
 const { SLOT_AVAILABLE, SLOT_BOOKED } = require("../const/constants.js");
 const checkNextSlot = require("./helpers/check-next-slot.js");
+const verifyToken = require("./helpers/verify-token.js");
 
 const bookSlot = async (req, res) => {
-  const { vehicleNumber, vehicleType, parkingId } = req.body;
+  const { vehicleNumber, vehicleType } = req.body;
+
+  const tokenVerify = verifyToken(req, res);
+  console.info({
+    message: "token verify",
+    tokenVerify,
+  });
+  
+  const { parkingId, } = tokenVerify;
+
   const db = req.app.get("db");
   console.info({
     message: "booking slot",

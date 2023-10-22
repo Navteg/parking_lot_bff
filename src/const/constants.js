@@ -1,26 +1,30 @@
-const port = 8000;
+const dotenv = require('dotenv');
+dotenv.config();
+
+const port = process.env.PORT || 8000;
+const ENV = process.env.ENV || "development";
 const DB_CONFIG = {
   client: "pg",
   connection: {
-    host: "ep-odd-sun-22651255-pooler.us-east-1.postgres.vercel-storage.com",
-    user: "default",
-    password: "6u0YoNgSanWi",
-    database: "verceldb",
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
     ssl: { require: true },
   },
 };
 
-// const DB_CONFIG = {
-//   client: "pg",
-//   connection: {
-//     host: "localhost",
-//     user: "postgres",
-//     password: "password",
-//     database: "parking",
-//   },
-// };
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_PUBLIC = process.env.JWT_PUBLIC;
 
 const regexGetNumber = /[0-9]/g;
+
+var tokenOption = {
+  issuer: "parking-system",
+  subject: "Parking System Info",
+  audience: "https://parking-lot-api-64l4.onrender.com",
+  expiresIn: "7d",
+};
 
 const SMALL_SLOT = "small";
 const MEDIUM_SLOT = "medium";
@@ -51,4 +55,8 @@ module.exports = {
   SLOT_BOOKED,
   PRICE_MAP,
   vehicleTypeList,
+  ENV,
+  JWT_SECRET,
+  JWT_PUBLIC,
+  tokenOption
 };

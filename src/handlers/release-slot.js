@@ -1,4 +1,5 @@
 const { PRICE_MAP, SLOT_AVAILABLE } = require("../const/constants.js");
+const verifyToken = require("./helpers/verify-token.js");
 
 const releaseSlot = async (req, res) => {
   const { vehicleNumber } = req.body;
@@ -10,12 +11,17 @@ const releaseSlot = async (req, res) => {
   });
 
   try {
+    verifyToken(req, res);
+    console.info({
+      message: "token verify",
+    });
+
     const bookingInfo = await db("booking")
       .select("*")
       .where("vehicle_number", vehicleNumber);
 
     if (bookingInfo.length === 0 || !bookingInfo || bookingInfo === undefined) {
-      res.status(404).send({
+      return res.status(404).send({
         message: `no booking found for vehicle number ${vehicleNumber}`,
       });
     }
@@ -39,6 +45,9 @@ const releaseSlot = async (req, res) => {
     });
 
     await db("booking").where("id", booking.id).del();
+    console.info({
+      message: "slot released",
+    });
     const totalHrs = Math.ceil(
       (new Date().getTime() - new Date(booking.created_at).getTime()) /
         (1000 * 60 * 60)
@@ -46,19 +55,19 @@ const releaseSlot = async (req, res) => {
 
     const totalAmount = totalHrs * PRICE_MAP[slot.type];
 
-    res.status(200).send({
+    return res.status(200).send({
       message: "slot released successfully",
       totalAmount,
       totalHrs,
-      "entryTime": booking.created_at,
-      "exitTime": new Date().toISOString(),
+      entryTime: booking.created_at,
+      exitTime: new Date().toISOString(),
     });
   } catch (e) {
     console.error({
       message: "failed to release slot",
       error: e,
     });
-    res.status(400).send({
+    return res.status(400).send({
       message: "failed to release slot",
     });
   }
