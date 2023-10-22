@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const { SLOT_AVAILABLE, SLOT_BOOKED } = require("../const/constants.js");
+const checkNextSlot = require("./helpers/check-next-slot.js");
 
 const bookSlot = async (req, res) => {
   const { vehicleNumber, vehicleType, parkingId } = req.body;
@@ -17,21 +18,25 @@ const bookSlot = async (req, res) => {
       .andWhere("type", vehicleType)
       .andWhere("status", SLOT_AVAILABLE);
 
+    let nextSlot;
     if (slots.length === 0 || slots === undefined) {
-      res.status(404).send({
-        message: `Sorry, no ${vehicleType} slot available`,
+      console.info({
+        message: `Sorry, no ${vehicleType} slot available. Checking for next slot`,
       });
+
+      nextSlot = await checkNextSlot(req);
+
+      if (!nextSlot) {
+        return res.status(400).send({
+          message: `Sorry, no ${vehicleType} slot available`,
+        });
+      }
     }
 
-    const slot = slots[0];
+    const slot = slots[0] || nextSlot;
     console.info({
       message: "slot found",
       slot,
-    });
-
-    await db("slots").where("id", slot.id).update({
-      status: SLOT_BOOKED,
-      updated_at: new Date(),
     });
 
     const bookingTable = await db.schema.hasTable("booking");
@@ -62,7 +67,12 @@ const bookSlot = async (req, res) => {
       bookingRes: JSON.stringify(bookingInfo),
     });
 
-    res.status(200).send({
+    await db("slots").where("id", slot.id).update({
+      status: SLOT_BOOKED,
+      updated_at: new Date(),
+    });
+
+    return res.status(200).send({
       message: "slot booked successfully",
       bookingId: bookingInfo.id,
       bay_id: slot.bay_id,

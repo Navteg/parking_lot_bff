@@ -27,6 +27,8 @@ const MEDIUM_SLOT = "medium";
 const LARGE_SLOT = "large";
 const X_LARGE_SLOT = "xLarge";
 
+const vehicleTypeList = [SMALL_SLOT, MEDIUM_SLOT, LARGE_SLOT, X_LARGE_SLOT];
+
 const PRICE_MAP = {
   [SMALL_SLOT]: 20,
   [MEDIUM_SLOT]: 40,
@@ -48,4 +50,5 @@ module.exports = {
   SLOT_AVAILABLE,
   SLOT_BOOKED,
   PRICE_MAP,
+  vehicleTypeList,
 };
