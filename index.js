@@ -51,6 +51,4 @@ app.post("/release-slot", function (req, res) {
   releaseSlot(req, res);
 });
 
-console.log("enviroment", ENV);
-
-app.listen(port, () => console.log(`App listening on port ${port}!`));
+app.listen(port, () => console.info(`App listening on port ${port}!`));

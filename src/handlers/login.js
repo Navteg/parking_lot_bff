@@ -8,7 +8,6 @@ const login = (req, res) => {
   async function isPasswordCorrect(hashPassword) {
     try {
       const result = await bcrypt.compare(password, hashPassword);
-      console.log(result);
       return result === true;
     } catch (error) {
       console.error(error);
