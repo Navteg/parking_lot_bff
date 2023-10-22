@@ -11,7 +11,8 @@ const releaseSlot = async (req, res) => {
   });
 
   try {
-    verifyToken(req, res);
+    const tokenVerify = verifyToken(req, res);
+    const { parkingId } = tokenVerify;
     console.info({
       message: "token verify",
     });
@@ -38,6 +39,15 @@ const releaseSlot = async (req, res) => {
       message: "slot found",
       slot,
     });
+
+    if (slot.parking_id !== parkingId) {
+      console.info({
+        message: `slot with id ${slot.id} is not in your parking lot`,
+      });
+      return res.status(400).send({
+        message: `slot with id ${slot.id} is not in your parking lot`,
+      });
+    }
 
     await db("slots").where("id", slot.id).update({
       status: SLOT_AVAILABLE,

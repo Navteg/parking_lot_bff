@@ -34,7 +34,6 @@ const login = (req, res) => {
         } else {
           if (await isPasswordCorrect(rows[0].password)) {
             const token = generateToken(id);
-            console.log(token);
             return res.status(200).send({
               message: "login successful",
               token: token,
