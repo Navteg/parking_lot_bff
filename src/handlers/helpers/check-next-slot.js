@@ -1,7 +1,7 @@
 const { vehicleTypeList, SLOT_AVAILABLE } = require("../../const/constants");
 
-const checkNextSlot = async (req) => {
-  const { vehicleType, parkingId } = req.body;
+const checkNextSlot = async (req, parkingId) => {
+  const { vehicleType } = req.body;
   const db = req.app.get("db");
   const nextSlot = vehicleTypeList.indexOf(vehicleType) + 1;
 

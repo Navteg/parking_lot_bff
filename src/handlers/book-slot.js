@@ -34,7 +34,7 @@ const bookSlot = async (req, res) => {
         message: `Sorry, no ${vehicleType} slot available. Checking for next slot`,
       });
 
-      nextSlot = await checkNextSlot(req);
+      nextSlot = await checkNextSlot(req, parkingId);
 
       if (!nextSlot) {
         return res.status(400).send({
