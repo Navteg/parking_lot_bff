@@ -70,10 +70,7 @@ const register = (req, res) => {
       for (let j = 1; j <= smallSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `SMALL${String(i).padEnd(2, "0")}${String(j).padEnd(
-              2,
-              "0"
-            )}`,
+            bay_id: `SMALL${i}${j}`,
             parking_id: parkingId,
             type: SMALL_SLOT,
             floor: i,
@@ -85,7 +82,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `SLOT${String(i).padEnd(2, "0")}${String(j).padEnd(2, "0")}`,
+              id: `SMALL${i}${j}`,
             });
           })
           .catch((error) => {
@@ -99,10 +96,7 @@ const register = (req, res) => {
       for (let j = 1; j <= mediumSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `MEDIUM${String(i).padEnd(2, "0")}${String(j).padEnd(
-              2,
-              "0"
-            )}`,
+            bay_id: `MEDIUM${i}${j}`,
             parking_id: parkingId,
             type: MEDIUM_SLOT,
             floor: i,
@@ -114,7 +108,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `SLOT${String(i).padEnd(2, "0")}${String(j).padEnd(2, "0")}`,
+              id: `MEDIUM${i}${j}`,
             });
           })
           .catch((error) => {
@@ -128,10 +122,7 @@ const register = (req, res) => {
       for (let j = 1; j <= largeSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `LARGE${String(i).padEnd(2, "0")}${String(j).padEnd(
-              2,
-              "0"
-            )}`,
+            bay_id: `LARGE${i}${j}`,
             parking_id: parkingId,
             type: LARGE_SLOT,
             floor: i,
@@ -143,7 +134,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `SLOT${String(i).padEnd(2, "0")}${String(j).padEnd(2, "0")}`,
+              id: `LARGE${i}${j}`,
             });
           })
           .catch((error) => {
@@ -157,10 +148,7 @@ const register = (req, res) => {
       for (let j = 1; j <= xLargeSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `XLARGE${String(i).padEnd(2, "0")}${String(j).padEnd(
-              2,
-              "0"
-            )}`,
+            bay_id: `XLARGE${i}${j}`,
             parking_id: parkingId,
             type: X_LARGE_SLOT,
             floor: i,
@@ -172,7 +160,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `SLOT${String(i).padEnd(2, "0")}${String(j).padEnd(2, "0")}`,
+              id: `XLARGE${i}${j}`,
             });
           })
           .catch((error) => {
