@@ -1,12 +1,12 @@
 const { vehicleTypeList, SLOT_AVAILABLE } = require("../../const/constants");
 
-const checkNextSlot = async (req, parkingId) => {
+const checkNextSlot = async (req, parkingId, trx) => {
   const { vehicleType } = req.body;
   const db = req.app.get("db");
   const nextSlot = vehicleTypeList.indexOf(vehicleType) + 1;
 
   for (let i = nextSlot; i < vehicleTypeList.length; i++) {
-    const slots = await db("slots")
+    const slots = await trx("slots")
       .select("*")
       .where("parking_id", parkingId)
       .andWhere("type", vehicleTypeList[i])
