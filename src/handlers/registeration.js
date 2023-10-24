@@ -28,41 +28,19 @@ const register = (req, res) => {
   });
 
   try {
-    db.schema.hasTable("parking_system").then(async function (exists) {
-      if (!exists) {
-        await db.schema.createTable("parking_system", function (table) {
-          table.string("id").primary();
-          table.string("password");
-          table.string("floors");
-          table.string("smallSlots");
-          table.string("mediumSlots");
-          table.string("largeSlots");
-          table.string("xLargeSlots");
-          table.string("created_at");
-        });
-      }
-      insertParkingData();
-    });
-    db.schema.hasTable("slots").then(async function (exists) {
-      if (!exists) {
-        await db.schema.createTable("slots", function (table) {
-          table.string("id").primary();
-          table.string("parking_id");
-          table.string("type");
-          table.string("floor");
-          table.string("status");
-          table.string("bay_id");
-          table.string("created_at");
-          table.string("updated_at");
-          table
-            .foreign("parking_id")
-            .references("id")
-            .inTable("parking_system");
-        });
-      }
-    });
+    insertParkingData();
   } catch (err) {
     res.status(400).send(err);
+  }
+
+  function numberToLetters(number) {
+    let result = "";
+    while (number > 0) {
+      const remainder = (number - 1) % 26;
+      result = String.fromCharCode(65 + remainder) + result;
+      number = Math.floor((number - 1) / 26);
+    }
+    return result;
   }
 
   async function insertSlots(parkingId) {
@@ -70,7 +48,7 @@ const register = (req, res) => {
       for (let j = 1; j <= smallSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `SMALL${i}${j}`,
+            bay_id: `SMALL - ${numberToLetters(i)}${j}`,
             parking_id: parkingId,
             type: SMALL_SLOT,
             floor: i,
@@ -82,7 +60,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `SMALL${i}${j}`,
+              id: `SMALL${numberToLetters(i)}${j}`,
             });
           })
           .catch((error) => {
@@ -96,7 +74,7 @@ const register = (req, res) => {
       for (let j = 1; j <= mediumSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `MEDIUM${i}${j}`,
+            bay_id: `MEDIUM - ${numberToLetters(i)}${j}`,
             parking_id: parkingId,
             type: MEDIUM_SLOT,
             floor: i,
@@ -108,7 +86,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `MEDIUM${i}${j}`,
+              id: `MEDIUM${numberToLetters(i)}${j}`,
             });
           })
           .catch((error) => {
@@ -122,7 +100,7 @@ const register = (req, res) => {
       for (let j = 1; j <= largeSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `LARGE${i}${j}`,
+            bay_id: `LARGE - ${numberToLetters(i)}${j}`,
             parking_id: parkingId,
             type: LARGE_SLOT,
             floor: i,
@@ -134,7 +112,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `LARGE${i}${j}`,
+              id: `LARGE${numberToLetters(i)}${j}`,
             });
           })
           .catch((error) => {
@@ -148,7 +126,7 @@ const register = (req, res) => {
       for (let j = 1; j <= xLargeSlots; j++) {
         db("slots")
           .insert({
-            bay_id: `XLARGE${i}${j}`,
+            bay_id: `XLARGE - ${numberToLetters(i)}${j}`,
             parking_id: parkingId,
             type: X_LARGE_SLOT,
             floor: i,
@@ -160,7 +138,7 @@ const register = (req, res) => {
           .then(() => {
             console.info({
               message: "new slot registered",
-              id: `XLARGE${i}${j}`,
+              id: `XLARGE${numberToLetters(i)}${j}`,
             });
           })
           .catch((error) => {

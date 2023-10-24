@@ -23,70 +23,68 @@ const bookSlot = async (req, res) => {
   });
   try {
     await db.transaction(async (trx) => {
-      const slots = await trx("slots")
-        .select("*")
-        .where("parking_id", parkingId)
-        .andWhere("type", vehicleType)
-        .andWhere("status", SLOT_AVAILABLE)
-        .forUpdate();
+      try {
+        const slots = await trx("slots")
+          .select("*")
+          .where("parking_id", parkingId)
+          .andWhere("type", vehicleType)
+          .andWhere("status", SLOT_AVAILABLE)
+          .first()
+          .forUpdate();
 
-      let nextSlot;
-      if (slots.length === 0 || slots === undefined) {
-        console.info({
-          message: `Sorry, no ${vehicleType} slot available. Checking for next slot`,
-        });
-
-        nextSlot = await checkNextSlot(req, parkingId, trx);
-
-        if (!nextSlot) {
-          return res.status(400).send({
-            message: `Sorry, no ${vehicleType} slot available`,
+        let nextSlot;
+        if (slots.length === 0 || slots === undefined) {
+          console.info({
+            message: `Sorry, no ${vehicleType} slot available. Checking for next slot`,
           });
+
+          nextSlot = await checkNextSlot(req, parkingId, trx);
+
+          if (!nextSlot) {
+            return res.status(400).send({
+              message: `Sorry, no ${vehicleType} slot available`,
+            });
+          }
         }
-      }
-      const slot = slots[0] || nextSlot;
-      console.info({
-        message: "slot found",
-        slot,
-      });
-      await trx("slots").where("id", slot.id).update({
-        status: SLOT_BOOKED,
-        updated_at: new Date(),
-      });
-      const bookingTable = await trx.schema.hasTable("booking");
-      if (!bookingTable) {
-        await trx.schema.createTable("booking", function (table) {
-          table.string("id").primary();
-          table.string("slot_id");
-          table.string("vehicle_number").unique();
-          table.string("vehicle_type");
-          table.string("created_at");
-          table.string("updated_at");
-          table.foreign("slot_id").references("id").inTable("slots");
+        const slot = slots[0] || nextSlot;
+        console.info({
+          message: "slot found",
+          slot,
+        });
+        await trx("slots").where("id", slot.id).update({
+          status: SLOT_BOOKED,
+          updated_at: new Date(),
+        });
+
+        const bookingInfo = {
+          id: uuidv4(),
+          slot_id: slot.id,
+          vehicle_number: vehicleNumber,
+          vehicle_type: vehicleType,
+          created_at: new Date(),
+          updated_at: new Date(),
+        };
+        await trx("booking").insert(bookingInfo);
+
+        console.info({
+          message: "slot booked successfully",
+          bookingRes: JSON.stringify(bookingInfo),
+        });
+
+        await trx.commit();
+        return res.status(200).send({
+          message: "slot booked successfully",
+          bookingId: bookingInfo.id,
+          bay_id: slot.bay_id,
+          floor: slot.floor,
+        });
+      } catch (err) {
+        trx.rollback();
+        console.error({
+          message: "failed to book slot",
+          err,
         });
       }
-      const bookingInfo = {
-        id: uuidv4(),
-        slot_id: slot.id,
-        vehicle_number: vehicleNumber,
-        vehicle_type: vehicleType,
-        created_at: new Date(),
-        updated_at: new Date(),
-      };
-      await trx("booking").insert(bookingInfo);
-
-      console.info({
-        message: "slot booked successfully",
-        bookingRes: JSON.stringify(bookingInfo),
-      });
-
-      await trx.commit();
-      return res.status(200).send({
-        message: "slot booked successfully",
-        bookingId: bookingInfo.id,
-        bay_id: slot.bay_id,
-        floor: slot.floor,
-      });
     });
   } catch (err) {
     console.error({

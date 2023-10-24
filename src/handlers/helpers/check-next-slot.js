@@ -10,7 +10,9 @@ const checkNextSlot = async (req, parkingId, trx) => {
       .select("*")
       .where("parking_id", parkingId)
       .andWhere("type", vehicleTypeList[i])
-      .andWhere("status", SLOT_AVAILABLE);
+      .andWhere("status", SLOT_AVAILABLE)
+      .first()
+      .forUpdate();
 
     if (slots.length > 0) {
       console.info({
