@@ -27,7 +27,8 @@ const bookSlot = async (req, res) => {
         .select("*")
         .where("parking_id", parkingId)
         .andWhere("type", vehicleType)
-        .andWhere("status", SLOT_AVAILABLE);
+        .andWhere("status", SLOT_AVAILABLE)
+        .forUpdate();
 
       let nextSlot;
       if (slots.length === 0 || slots === undefined) {
