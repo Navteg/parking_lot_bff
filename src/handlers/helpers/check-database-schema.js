@@ -1,5 +1,4 @@
 const checkDatabaseSchema = async (app) => {
-  console.log(app);
   const db = app.get("db");
   try {
     db.schema.hasTable("parking_system").then(async function (exists) {

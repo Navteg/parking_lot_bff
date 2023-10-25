@@ -29,7 +29,6 @@ const bookSlot = async (req, res) => {
           .where("parking_id", parkingId)
           .andWhere("type", vehicleType)
           .andWhere("status", SLOT_AVAILABLE)
-          .first()
           .forUpdate();
 
         let nextSlot;
