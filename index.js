@@ -7,6 +7,7 @@ const bookSlot = require("./src/handlers/book-slot.js");
 const releaseSlot = require("./src/handlers/release-slot.js");
 const app = express();
 var bodyParser = require("body-parser");
+const checkDatabaseSchema = require("./src/handlers/helpers/check-database-schema.js");
 
 app.use(bodyParser.json());
 app.use(
@@ -34,6 +35,11 @@ app.use(express.urlencoded());
 
 const db = knex(DB_CONFIG);
 app.set("db", db);
+
+// checking if all the tables are present in the database, for development only
+if (ENV === "development") {
+  checkDatabaseSchema(app);
+}
 
 app.post("/login", function (req, res) {
   login(req, res);

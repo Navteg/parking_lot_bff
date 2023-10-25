@@ -44,111 +44,71 @@ const register = (req, res) => {
   }
 
   async function insertSlots(parkingId) {
+    const slots = [];
+
     for (let i = 1; i <= floors; i++) {
       for (let j = 1; j <= smallSlots; j++) {
-        db("slots")
-          .insert({
-            bay_id: `SMALL - ${numberToLetters(i)}${j}`,
-            parking_id: parkingId,
-            type: SMALL_SLOT,
-            floor: i,
-            status: SLOT_AVAILABLE,
-            id: uuidv4(),
-            created_at: new Date(),
-            updated_at: new Date(),
-          })
-          .then(() => {
-            console.info({
-              message: "new slot registered",
-              id: `SMALL${numberToLetters(i)}${j}`,
-            });
-          })
-          .catch((error) => {
-            console.error({
-              message: "failed to insert data in small slots",
-              error,
-            });
-            res.status(400).send(error);
-          });
+        slots.push({
+          bay_id: `SMALL - ${numberToLetters(i)}${j}`,
+          parking_id: parkingId,
+          type: SMALL_SLOT,
+          floor: i,
+          status: SLOT_AVAILABLE,
+          id: uuidv4(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
       }
       for (let j = 1; j <= mediumSlots; j++) {
-        db("slots")
-          .insert({
-            bay_id: `MEDIUM - ${numberToLetters(i)}${j}`,
-            parking_id: parkingId,
-            type: MEDIUM_SLOT,
-            floor: i,
-            status: SLOT_AVAILABLE,
-            id: uuidv4(),
-            created_at: new Date(),
-            updated_at: new Date(),
-          })
-          .then(() => {
-            console.info({
-              message: "new slot registered",
-              id: `MEDIUM${numberToLetters(i)}${j}`,
-            });
-          })
-          .catch((error) => {
-            console.error({
-              message: "failed to insert data in medium slot",
-              error,
-            });
-            res.status(400).send(error);
-          });
+        slots.push({
+          bay_id: `MEDIUM - ${numberToLetters(i)}${j}`,
+          parking_id: parkingId,
+          type: MEDIUM_SLOT,
+          floor: i,
+          status: SLOT_AVAILABLE,
+          id: uuidv4(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
       }
       for (let j = 1; j <= largeSlots; j++) {
-        db("slots")
-          .insert({
-            bay_id: `LARGE - ${numberToLetters(i)}${j}`,
-            parking_id: parkingId,
-            type: LARGE_SLOT,
-            floor: i,
-            status: SLOT_AVAILABLE,
-            id: uuidv4(),
-            created_at: new Date(),
-            updated_at: new Date(),
-          })
-          .then(() => {
-            console.info({
-              message: "new slot registered",
-              id: `LARGE${numberToLetters(i)}${j}`,
-            });
-          })
-          .catch((error) => {
-            console.error({
-              message: "failed to insert data in large slot",
-              error,
-            });
-            res.status(400).send(error);
-          });
+        slots.push({
+          bay_id: `LARGE - ${numberToLetters(i)}${j}`,
+          parking_id: parkingId,
+          type: LARGE_SLOT,
+          floor: i,
+          status: SLOT_AVAILABLE,
+          id: uuidv4(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
       }
       for (let j = 1; j <= xLargeSlots; j++) {
-        db("slots")
-          .insert({
-            bay_id: `XLARGE - ${numberToLetters(i)}${j}`,
-            parking_id: parkingId,
-            type: X_LARGE_SLOT,
-            floor: i,
-            status: SLOT_AVAILABLE,
-            id: uuidv4(),
-            created_at: new Date(),
-            updated_at: new Date(),
-          })
-          .then(() => {
-            console.info({
-              message: "new slot registered",
-              id: `XLARGE${numberToLetters(i)}${j}`,
-            });
-          })
-          .catch((error) => {
-            console.error({
-              message: "failed to insert data in xLarge slot",
-              error,
-            });
-            res.status(400).send(error);
-          });
+        slots.push({
+          bay_id: `XLARGE - ${numberToLetters(i)}${j}`,
+          parking_id: parkingId,
+          type: X_LARGE_SLOT,
+          floor: i,
+          status: SLOT_AVAILABLE,
+          id: uuidv4(),
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
       }
+    }
+
+    try {
+      await db.batchInsert("slots", slots, 100);
+      console.info({
+        message: "new slots registered",
+        parkingId,
+      });
+    } catch (error) {
+      console.error({
+        message: "failed to insert data in slots",
+        error,
+      });
+      res.status(400).send(error);
     }
   }
 
