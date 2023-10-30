@@ -9,7 +9,7 @@ const {
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
 
-const register = (req, res) => {
+const register = async (req, res) => {
   const { floors, smallSlots, mediumSlots, largeSlots, xLargeSlots, password } =
     req.body;
   const db = req.app.get("db");
@@ -28,7 +28,7 @@ const register = (req, res) => {
   });
 
   try {
-    insertParkingData();
+    await insertParkingData();
   } catch (err) {
     res.status(400).send(err);
   }
@@ -108,73 +108,47 @@ const register = (req, res) => {
         message: "failed to insert data in slots",
         error,
       });
-      res.status(400).send(error);
+      return res.status(400).send(error);
     }
   }
 
-  function insertParkingData() {
-    db("parking_system")
-      .select(db.raw("MAX(id) as max_id"))
-      .then(async (rows) => {
-        const maxId = rows[0].max_id || 0;
+  async function insertParkingData() {
+    const parkData = await db("parking_system").max("id").as("max");
+    const maxId = parkData[0].max || 0;
+    console.log(maxId);
+    console.log(parkData);
 
-        let newParkingId;
-        if (maxId === 0) {
-          newParkingId = `PARK${String(parseInt(maxId) + 1).padEnd(3, "0")}`;
-        } else {
-          let digit = maxId.match(regexGetNumber).join("");
-          newParkingId = `PARK${String(parseInt(digit) + 1).padEnd(3, "0")}`;
-        }
+    let newParkingId;
+    if (maxId === 0) {
+      newParkingId = `PARK${String(parseInt(maxId) + 1).padEnd(3, "0")}`;
+    } else {
+      let digit = maxId.match(regexGetNumber).join("");
+      newParkingId = `PARK${String(parseInt(digit) + 1).padEnd(3, "0")}`;
+    }
 
-        db("parking_system")
-          .insert({
-            id: newParkingId,
-            password: await getHashPassword(),
-            floors,
-            smallSlots,
-            mediumSlots,
-            largeSlots,
-            xLargeSlots,
-            created_at: new Date(),
-          })
-          .then(() => {
-            console.info({
-              message: "new park system registered",
-              id: newParkingId,
-            });
-            insertSlots(newParkingId)
-              .then(() => {
-                console.info({
-                  message: "Inserted slots",
-                  id: newParkingId,
-                });
-                return res.status(200).send({
-                  id: newParkingId,
-                });
-              })
-              .catch((e) => {
-                console.error({
-                  message: "failed to insert slots",
-                  error,
-                });
-                return res.status(400).send(e);
-              });
-          })
-          .catch((error) => {
-            console.error({
-              message: "failed to insert data",
-              error,
-            });
-            res.status(400).send(error);
-          });
-      })
-      .catch((error) => {
-        console.error({
-          message: "failed to get max id",
-          error,
-        });
-        res.status(400).send(error);
-      });
+    await db("parking_system").insert({
+      id: newParkingId,
+      password: await getHashPassword(),
+      floors,
+      smallSlots,
+      mediumSlots,
+      largeSlots,
+      xLargeSlots,
+      created_at: new Date(),
+    });
+
+    console.info({
+      message: "new parking system registered",
+      newParkingId,
+    });
+
+    await insertSlots(newParkingId);
+
+    console.info({
+      message: "Inserted slots",
+      id: newParkingId,
+    });
+    res.status(200).send({ id: newParkingId });
   }
 };
 

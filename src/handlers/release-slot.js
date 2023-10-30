@@ -15,6 +15,7 @@ const releaseSlot = async (req, res) => {
     const { parkingId } = tokenVerify;
     console.info({
       message: "token verify",
+      parkingId,
     });
 
     const bookingInfo = await db("booking")

@@ -83,6 +83,7 @@ const bookSlot = async (req, res) => {
           message: "failed to book slot",
           err,
         });
+        return res.status(400).send(err);
       }
     });
   } catch (err) {
